@@ -1,2 +1,19 @@
 [workspace]
 members = ["accessibility-ng", "accessibility-sys-ng", "aq-ng"]
+
+[workspace.dependencies]
+# Updated shared dependencies
+core-foundation = "0.9.4"
+core-foundation-sys = "0.8.7"
+core-graphics-types = "0.1.1"
+thiserror = "1"
+structopt = "0.3"
+
+# Replacing objc with objc2
+objc2 = "0.6.0"
+objc2-foundation = "0.3.0"
+objc2-app-kit = "0.3.0"
+
+# Internal dependencies 
+accessibility-sys-ng = "0.2.0"
+accessibility-ng = "0.2.0"

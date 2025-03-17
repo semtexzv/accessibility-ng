@@ -13,10 +13,7 @@ use accessibility_sys_ng::{
     AXUIElementGetTypeID, AXUIElementIsAttributeSettable, AXUIElementPerformAction, AXUIElementRef,
     AXUIElementSetAttributeValue, AXUIElementSetMessagingTimeout,
 };
-use cocoa::{
-    base::{id, nil},
-    foundation::{NSAutoreleasePool, NSFastEnumeration, NSString},
-};
+// Remove the NSString import since we're no longer using it directly
 use core_foundation::{
     array::CFArray,
     base::{CFType, TCFType, TCFTypeRef},
@@ -26,7 +23,8 @@ use core_foundation::{
     impl_CFTypeDescription, impl_TCFType,
     string::CFString,
 };
-use objc::{class, msg_send, rc::autoreleasepool, sel, sel_impl};
+use objc2::{class, msg_send};
+use objc2::rc::autoreleasepool;
 
 use crate::{
     util::{ax_call, ax_call_void},
@@ -51,15 +49,21 @@ impl AXUIElement {
 
     pub fn application_with_bundle(bundle_id: &str) -> Result<Self, Error> {
         unsafe {
-            autoreleasepool(|| {
-                let bundle_id_str = NSString::alloc(nil).init_str(bundle_id).autorelease();
-                let apps: id = msg_send![
-                    class![NSRunningApplication],
-                    runningApplicationsWithBundleIdentifier: bundle_id_str
+            autoreleasepool(|_pool| {
+                use objc2_foundation::{NSArray, NSString};
+                use objc2_app_kit::NSRunningApplication;
+                
+                // Create an NSString manually
+                let bundle_id_str = NSString::from_str(bundle_id);
+                
+                // Get the NSArray result directly
+                let apps: objc2::rc::Retained<NSArray<NSRunningApplication>> = msg_send![
+                    class!(NSRunningApplication),
+                    runningApplicationsWithBundleIdentifier: &*bundle_id_str
                 ];
 
                 if let Some(app) = apps.iter().next() {
-                    let pid: pid_t = msg_send![app, processIdentifier];
+                    let pid: pid_t = msg_send![&*app, processIdentifier];
 
                     Ok(Self::wrap_under_create_rule(AXUIElementCreateApplication(
                         pid,

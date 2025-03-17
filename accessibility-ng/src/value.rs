@@ -4,7 +4,7 @@ use std::{ffi::c_void, mem::MaybeUninit};
 
 use crate::Error;
 
-use cocoa::appkit::CGPoint;
+use core_graphics_types::geometry::CGPoint;
 use core_foundation::base::{CFRange, TCFType};
 use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 

@@ -1,6 +1,6 @@
 [package]
 name = "aq-ng"
-version = "0.1.4"
+version = "0.2.0"
 authors = ["yetone <yetoneful@gmail.com>"]
 edition = "2018"
 license = "MIT / Apache-2.0"
@@ -9,7 +9,9 @@ repository = "https://github.com/yetone/accessibility"
 description = "Accessibility query"
 
 [dependencies]
-core-foundation = "0.9"
-structopt = "0.3"
+# Use workspace dependencies
+core-foundation.workspace = true
+structopt.workspace = true
 
-accessibility-ng = "0.1.6"
+# Internal dependency (which now uses objc2)
+accessibility-ng = { version = "0.2.0", path = "../accessibility-ng" }
